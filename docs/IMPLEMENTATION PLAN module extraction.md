@@ -66,17 +66,18 @@ Private modules (`_` prefix) are re-exported by their `__init__.py`. Users never
 ## Extraction order & dependency graph
 
 ```
-1. core/          (zero deps, pure stdlib)
+1. core/          (zero deps, pure stdlib)                          ✅
        ↓
-2. llm/           (mlx: mlx-lm only; litellm: litellm + auth.json + core/errors; hardest, last)
+2. llm/           (mlx: mlx-lm only; litellm: litellm + auth.json)  ✅
        ↓
-3. gmail/         (depends on google-api-client + auth; DEPENDS on core/errors after module 2)
-4. browser/       (depends on selenium, optional)
+3. gmail/         (google-api-client + auth)                         ✅ (decisionmaker only)
        ↓
-5. speech/tts     (zero deps beyond mlx-audio)
+4. speech/        (mlx-audio, sounddevice, parakeet-mlx)             ✅
+       ↓
+5. browser/       (selenium, optional)                               ☐
 ```
 
-Rationale: LLM is the most-reused module (3 consumers) and the hardest unification. Shipping it second allows gmail to depend on its error types (via core/errors, already shipped). Browser (2 consumers) and speech (2 consumers) follow.
+Rationale: Hardest modules first (llm → gmail). Speech is self-contained, done whenever. Browser is last — smallest scope, no blocking dependencies.
 
 Each module is extracted, tested in isolation, then its consumers are migrated via re-export shims.
 
