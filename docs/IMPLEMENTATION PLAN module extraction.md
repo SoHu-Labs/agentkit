@@ -4,7 +4,7 @@
 
 | Status | Module | Description |
 |--------|--------|-------------|
-| ☐ | core/ | repo_root() + AgentError base class (4 consumers, stdlib) |
+| ✅ | core/ | repo_root() + AgentError base class (4 consumers, stdlib) |
 | ☐ | llm/ | MLX local models + litellm cloud + DeepSeek auth fallback (3 consumers) |
 | ☐ | gmail/ | Gmail API client with Protocol-based testability (3 consumers) |
 | ☐ | browser/ | Selenium Brave attach + WebDriver utilities (2 consumers) |
