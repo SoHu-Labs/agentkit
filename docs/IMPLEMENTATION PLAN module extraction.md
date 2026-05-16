@@ -74,7 +74,7 @@ Private modules (`_` prefix) are re-exported by their `__init__.py`. Users never
        ↓
 4. speech/        (mlx-audio, sounddevice, parakeet-mlx)             ✅
        ↓
-5. browser/       (selenium, optional)                               ☐
+5. browser/       (selenium, optional)                               ✅
 ```
 
 Rationale: Hardest modules first (llm → gmail). Speech is self-contained, done whenever. Browser is last — smallest scope, no blocking dependencies.
@@ -641,7 +641,7 @@ cd ~/Software/Prototypes/email-digest && python -m pytest tests/ -x -q
 
 ---
 
-## Module 4 — `browser/`
+## Module 4 — `speech/`
 
 ### User perspective
 
@@ -728,7 +728,7 @@ cd ~/Software/Prototypes/email-digest && python -m pytest tests/ -x -q
 
 ---
 
-## Module 5 — `speech/tts`
+## Module 5 — `browser/`
 
 ### User perspective
 
