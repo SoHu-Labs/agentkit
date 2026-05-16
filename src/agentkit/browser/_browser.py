@@ -89,7 +89,7 @@ def build_chrome_options(
     return opts
 
 
-def chrome_options_for_debugger(
+def build_chrome_options_for_remote_debugging(
     *,
     debugger_address: str,
     download_dir: Path | None = None,
@@ -114,7 +114,7 @@ def chrome_driver_attach(
     debugger_address: str,
     download_dir: Path | None = None,
 ) -> webdriver.Chrome:
-    opts = chrome_options_for_debugger(
+    opts = build_chrome_options_for_remote_debugging(
         debugger_address=debugger_address,
         download_dir=download_dir,
     )
