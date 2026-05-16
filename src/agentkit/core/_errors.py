@@ -8,6 +8,10 @@ class AgentError(Exception):
     """Base exception for all agent tool errors."""
 
 
+class LLMError(AgentError):
+    """LLM provider or API call failure."""
+
+
 class LLMFailureWithTranscript(AgentError):
     """LLM call failed, but partial transcript is available for retry/resume."""
 
