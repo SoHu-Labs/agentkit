@@ -123,7 +123,7 @@ class GmailApiBackend:
                 .execute()
             )
         except HttpError as e:
-            if e.resp.status == 404:
+            if e.resp.status in (400, 404):
                 raise GmailMessageNotFoundError(f"Message {message_id} not found") from e
             raise GmailError(str(e)) from e
 
@@ -252,7 +252,7 @@ def resolve_spec_to_message(
     try:
         body = backend.fetch_message_body(spec)
         return spec, body
-    except GmailMessageNotFoundError:
+    except (GmailMessageNotFoundError, GmailError):
         pass
 
     results = backend.search_messages(spec, max_results=max(pick_index + 1, 5))
