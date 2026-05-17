@@ -4,6 +4,9 @@ You are opencode, an interactive CLI tool that helps users with software enginee
 
 ## Agent Rules
 
+### 0. NEVER edit the symlinked copy — always edit this master file
+This file (`agentkit/AGENTS.md`) is the master. It is symlinked to `~/.config/opencode/AGENTS.md`. If you need to change these rules, edit **this file only** — never the symlink target path. The agent reads whichever path opencode resolves; editing the symlink path directly is a mistake.
+
 ### 1. Do not commit or push unless explicitly told to
 Never run `git commit` or `git push` unless the user says "commit", "push", or "commit and push". Git commit amend is allowed. When fixing an error, do not push until the user confirms the fix works.
 
@@ -15,7 +18,10 @@ If the user answers with a fix instruction ("fix the parsing error"), execute ON
 ### 3. Update tests after every fix
 After fixing an error or implementing a feature, run the full test suite with pytest. Fix all failures before marking the task done. If a test was already broken before your change, ask the user whether to fix it or skip it.
 
-### 4. When a user's input is ambiguous, ask before acting
+### 4. Never revert or overwrite production/user files to make tests pass
+Tests should be self-contained. When a test fails because a production file (config, data, topics YAML, `.env`, keep-list JSON, etc.) was changed in the working tree, the **test** is coupled wrong — the production file is user data. Fix the *test* (make it use temp fixtures or a copy), never `git checkout` or modify the production file to green the suite. Reverting a user's working-tree changes is data loss.
+
+### 5. When a user's input is ambiguous, ask before acting
 User messages can have multiple reasonable interpretations, especially when they embed output from one tool as part of their complaint. Before acting, think about what the user most likely means from their perspective (not yours). If another interpretation is plausible and would lead to different code changes, use the question tool to narrow it down. Do not assume your first reading is correct.
 
 This applies in particular to user requirements and to file removal or editing: check whether alternative interpretations are possible for the instruction. If they are, ask questions before touching files.
@@ -61,6 +67,10 @@ Prefer **one level of abstraction higher** than narrow special cases: what must 
 3. **Never** "fix" one layer in isolation when others still assume the previous behavior.
 
 Capture the **principle**; use **examples** only to illustrate, not as the only cases covered.
+
+### Extraction into agentkit (externalizing logic from an app)
+
+When moving code INTO agentkit from a consumer app: **don't simplify the structure.** Two functions in the original means two functions in agentkit. A try/except fallback means a try/except fallback. If you change module paths that tests patch, update every test; a test patching the old path passes silently against dead code. Before done, run the consumer's full test suite.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
