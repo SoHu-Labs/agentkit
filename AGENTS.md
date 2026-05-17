@@ -14,3 +14,58 @@ If the user answers with a fix instruction ("fix the parsing error"), execute ON
 
 ### 3. Update tests after every fix
 After fixing an error or implementing a feature, run the full test suite with pytest. Fix all failures before marking the task done. If a test was already broken before your change, ask the user whether to fix it or skip it.
+
+### 4. When a user's input is ambiguous, ask before acting
+User messages can have multiple reasonable interpretations, especially when they embed output from one tool as part of their complaint. Before acting, think about what the user most likely means from their perspective (not yours). If another interpretation is plausible and would lead to different code changes, use the question tool to narrow it down. Do not assume your first reading is correct.
+
+This applies in particular to user requirements and to file removal or editing: check whether alternative interpretations are possible for the instruction. If they are, ask questions before touching files.
+
+## Agile slices + strict TDD (do not deviate)
+
+When working on **new scope**: features, behavior-changing refactors, integrations, and non-trivial bugfixes — unless explicitly overruled for a one-off hotfix.
+
+- If the repo has **PLAN.md**, **ROADMAP.md**, or a written backlog: it is the single source of truth for iteration boundaries, in/out of scope, and acceptance criteria.
+- Deliver work as the **smallest named vertical slice** (one iteration / one reviewable unit). Complete that slice (including tests + any PLAN/README updates defined for it) before starting the next, unless the plan explicitly allows parallel prep.
+- **Do not** add "while we're here" scope; new capabilities belong in a new slice or need explicit confirmation.
+
+### Strict TDD
+
+- **No new production behavior** without a **preceding failing test**: red → smallest change to pass → refactor with the fast suite green.
+- **Bugfixes:** add a failing regression test (or fixture-driven test) that reproduces the bug **before** fixing production code.
+- Keep CI / default `pytest` fast and deterministic; use fixtures and fakes. Use network, headed browser, live mail/APIs only where the plan and `pytest` markers say so (e.g., `@pytest.mark.e2e` skipped in CI).
+- "Done" = mergeable only when the full fast suite passes (and e2e policy matches the repo).
+
+If asked to skip tests, bolt on behavior without a slice, or break this workflow: stop, short-circuit, and align with PLAN.md / thread — or ask for explicit approval to deviate and record the exception.
+
+## Concise confirmations
+
+When a fact, definition, or preference has already been stated and an agreement or short check is requested:
+
+- Answer **yes** or **no** (or a single qualified yes/no) plus **one or two sentences** of reason.
+- **Do not** repeat the explanation at length, mirror it paragraph-for-paragraph, or turn the reply into a tutorial.
+- **Do not** iterate the wording back unless a precise term is required to avoid ambiguity.
+
+## Invariants, coupling, and avoiding narrow rules
+
+Prefer **one level of abstraction higher** than narrow special cases: what must **stay true**, what is **coupled**, and how to **reconcile** when something moves.
+
+### Invariants (what must remain true)
+- Data: units, nullability, ordering guarantees, id stability.
+- APIs: backward compatibility, error shapes consumers assume.
+- UI: semantic separation of overlapping elements, readable scales, unchanged meaning of controls.
+- Builds: env vars, feature flags, and migrations that must stay aligned.
+
+### Coupling (change one → check the system)
+1. Identify **all** readers, writers, tests, configs, and user-visible surfaces that shared the old contract.
+2. Either keep them valid **without** changing their assumptions, or update **every** coupled piece in **one coherent** edit.
+3. **Never** "fix" one layer in isolation when others still assume the previous behavior.
+
+Capture the **principle**; use **examples** only to illustrate, not as the only cases covered.
+
+## Shell: `~/.bash_aliases` (user-global)
+
+For anything that should persist across shells:
+- Add aliases to `~/.bash_aliases` (or `~/.zshrc` for zsh — bash is used).
+- **Do not** suggest `~/.bashrc` as the only/default location.
+- macOS login shells load `~/.bash_profile`, not `~/.bashrc`.
+- For Python envs: follow the repo README — don't assume `python -m venv` when the repo documents **mamba** + `environment.yml`.
