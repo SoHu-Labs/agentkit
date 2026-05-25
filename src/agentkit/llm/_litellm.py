@@ -91,6 +91,11 @@ def _get_personal_deepseek_key() -> str | None:
     return None
 
 
+# Public aliases (consumers import these instead of re-implementing auth readers)
+get_go_api_key = _get_go_api_key
+get_personal_deepseek_key = _get_personal_deepseek_key
+
+
 # ---------------------------------------------------------------------------
 # Model alias resolution
 # ---------------------------------------------------------------------------

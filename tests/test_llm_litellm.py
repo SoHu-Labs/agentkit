@@ -287,3 +287,11 @@ class TestResponseCost:
     def test_returns_zero_on_error(self):
         with patch("agentkit.llm._litellm.litellm.completion_cost", side_effect=Exception("nope")):
             assert response_cost_usd(None) == 0.0
+
+
+class TestPublicAuthReaders:
+    def test_public_names_are_the_private_impls(self):
+        from agentkit.llm import get_go_api_key, get_personal_deepseek_key
+        from agentkit.llm._litellm import _get_go_api_key, _get_personal_deepseek_key
+        assert get_go_api_key is _get_go_api_key
+        assert get_personal_deepseek_key is _get_personal_deepseek_key

@@ -27,3 +27,7 @@ class LLMFailureWithTranscript(AgentError):
         self.transcript = transcript
         self.cost_usd = cost_usd
         self.rounds = rounds
+
+
+class ConfigError(AgentError):
+    """Raised when configuration is missing or malformed."""
