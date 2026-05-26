@@ -26,6 +26,13 @@ User messages can have multiple reasonable interpretations, especially when they
 
 This applies in particular to user requirements and to file removal or editing: check whether alternative interpretations are possible for the instruction. If they are, ask questions before touching files.
 
+### 6. Stage explicitly; every commit must be self-contained and green
+A commit must contain only the work for the current task — never the user's unrelated, pre-existing working-tree edits.
+
+- Stage files **by name** (`git add src/foo.py tests/test_foo.py`). **Never** `git add -A`, `git add .`, `git add --all`, or `git commit -a / -am / --all` — these sweep unrelated changes into your commit. (The `commit-discipline` plugin blocks them; if blocked, list the files explicitly.)
+- Before committing, run `git status` and `git diff --cached --stat`. Unstage anything not part of the task (`git restore --staged <file>`). If the tree holds changes you did **not** make, leave them unstaged and tell the user they're there.
+- "Done" means the committed state is green **on a clean tree**: with unrelated edits stashed/unstaged, the relevant suite passes at HEAD. Never commit a code change while leaving its matching test update uncommitted — that makes HEAD red even though the dirty working tree looks green.
+
 ## Agile slices + strict TDD (do not deviate)
 
 When working on **new scope**: features, behavior-changing refactors, integrations, and non-trivial bugfixes — unless explicitly overruled for a one-off hotfix.
