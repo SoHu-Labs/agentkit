@@ -96,6 +96,8 @@ def build_chrome_options_for_remote_debugging(
 ) -> Options:
     opts = Options()
     opts.add_experimental_option("debuggerAddress", debugger_address.strip())
+    if _IS_MACOS and Path(_BRAVE_PATH_MACOS).exists():
+        opts.binary_location = _BRAVE_PATH_MACOS
     if download_dir is not None:
         dl = str(download_dir.resolve())
         prefs: dict[str, object] = {
